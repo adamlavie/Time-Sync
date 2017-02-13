@@ -17,7 +17,7 @@ from time_sync.constants import (CLIENT_MASTER_UPDATE_QUEUE_ENV,
 from utils import open_channel, create_logger
 
 MY_MESSAGE_QUEUE = os.getenv(CLIENT_MASTER_UPDATE_QUEUE_ENV)
-BROKER_HOST_IP = os.getenv(RABBITMQ_HOST_IP_ENV, '172.17.0.3')
+BROKER_HOST_IP = os.getenv(RABBITMQ_HOST_IP_ENV)
 
 CLIENT_CONTAINER_IP = socket.gethostbyname(socket.gethostname())
 CLIENT_ID = str(uuid.uuid4())
@@ -112,7 +112,8 @@ class ClientBootstrapper(object):
         # Add the appropriate bindings
         self._add_bindings(result)
 
-    def _create_queue(self):
+    @staticmethod
+    def _create_queue():
         with open_channel(BROKER_HOST_IP) as _channel:
             return _channel.queue_declare(queue=_CLIENT_QUEUE_ID,
                                           durable=True)

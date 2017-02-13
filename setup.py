@@ -21,11 +21,11 @@ setup(
         ]
     },
     install_requires=[
-        'celery>=4.0.2',
-        'docker-py>=1.10.6',
-        'pika>=0.10.0',
-        'redispy>=3.0.0',
-        'click>=4.0'
+        'celery==4.0.2',
+        'docker-py==1.10.6',
+        'pika==0.10.0',
+        'redispy==3.0.0',
+        'click>=6.7'
     ]
 
 )

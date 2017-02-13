@@ -45,26 +45,9 @@ class RedisClient(object):
         return cid == self.cache.get(name=MASTER_CLIENT_ID_KEY)
 
     def set_client_data(self, data):
-        message_ex = self._get_message_expiration(data)
-        if message_ex:
-            self.logger.debug('Client message expires in {} seconds'
-                              .format(message_ex))
-            self.cache.set(data['id'], pickle.dumps(data), ex=message_ex)
-        else:
-            # This would indicate queue is massively overloaded with messages.
-            self.logger.warn('Client message is stale. Discarding message..')
-
-    def _get_message_expiration(self, data):
-        message_ex = None
-        master_data = self.get_master_data()
-        if master_data and master_data['id'] == data.get('master_id'):
-            time_delta = master_data['time'] - (data.get('master_time', 0)
-                                                or 0)
-            if time_delta <= CLIENT_MESSAGE_TIMEOUT:
-                message_ex = int(CLIENT_MESSAGE_TIMEOUT - time_delta)
-        else:
-            message_ex = CLIENT_MESSAGE_TIMEOUT
-        return message_ex
+        self.cache.set(data['id'],
+                       pickle.dumps(data),
+                       ex=CLIENT_MESSAGE_TIMEOUT)
 
     def elect_leader(self):
         leader = self._elect_leader()
